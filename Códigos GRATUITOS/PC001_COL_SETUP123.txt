@@ -1,0 +1,46 @@
+// ###################################################################
+// ######### FABRICA DE SETUPS - www.FabricaDeSetups.com.br ##########
+// ###################################################################
+
+// IMPORTANTE: Todos os códigos publicados pela Fábrica de Setup possuem
+// carater educacional. Recomenda-se a sua utilização apenas em ambiente
+// de simulação (Backtest). Qualquer aplicação em contas reais é de inteira
+// responsabilidade do usuário, devendo o mesmo ter realizado todos os testes
+// necessários para certificar de que o código se comporta da maneira que espera. 
+// O software Profit Pro da Nelogica recebe constantemente atualizações que
+// podem afetar o funcionamento de códigos já existentes. Desta forma, A Fábrica 
+// de setup não se responsabiliza por nenhuma execução dos códigos em conta real.
+
+// -------------------------------------------------------------------
+//       CÓDIGO DO SETUP: PC001 - Padrão 123
+// DATA DE IMPLEMENTAÇÃO: 25/05/2023
+//                VERSÃO: V1.0 (GRATUITA)
+//    TIPO DE ESTRATÉGIA: COLORAÇÃO
+//             DESCRIÇÃO: Sinaliza em verde o candle no qual haveria uma 
+//                        compra e de vermelho quando haveria uma venda, 
+//                        uma vez satisfeitas as condições estipuladas no
+//                        setup 123 em sua versão mais básica (sem utilização
+//                        de filtro de contexto)
+// -------------------------------------------------------------------
+
+
+begin
+  // Identificação Padrão 123 de Compra
+  if  (Close[3] < Open[3])
+  and (Close[2] < Open[2])
+  and (Low[3] > Low[2])
+  and (Close[1] > Open[1])
+  and (Low[1] > Low[2])
+  and ((High[1] > Low) and (High[1] < High))
+  then PaintBar(clGreen);
+
+  // Identificação Padrão 123 de Venda
+  if  (Close[3] > Open[3])
+  and (Close[2] > Open[2])
+  and (High[3] < High[2])
+  and (Close[1] < Open[1])
+  and (High[1] < High[2])
+  and ((Low[1] > Low) and (Low[1] < High))   
+  then PaintBar(clRed);
+
+end.
