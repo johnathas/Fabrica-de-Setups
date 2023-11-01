@@ -1,0 +1,106 @@
+// ###################################################################
+// ######### FABRICA DE SETUPS - www.FabricaDeSetups.com.br ##########
+// ###################################################################
+
+// IMPORTANTE: Todos os códigos publicados pela Fábrica de Setup possuem
+// carater educacional. Recomenda-se a sua utilização apenas em ambiente
+// de simulação (Backtest). Qualquer aplicação em contas reais é de inteira
+// responsabilidade do usuário, devendo o mesmo ter realizado todos os testes
+// necessários para certificar de que o código se comporta da maneira que espera. 
+// O software Profit Pro da Nelogica recebe constantemente atualizações que
+// podem afetar o funcionamento de códigos já existentes. Desta forma, A Fábrica 
+// de setup não se responsabiliza por nenhuma execução dos códigos em conta real.
+
+// -------------------------------------------------------------------
+//       CÓDIGO DO SETUP: RT003 - Triple Crossover
+// DATA DE IMPLEMENTAÇÃO: 25/05/2023
+//                VERSÃO: V1.0 (GRATUITA)
+//    TIPO DE ESTRATÉGIA: EXECUÇÃO
+//             DESCRIÇÃO: Realiza compra/reversão no cruzamento da média intermediaria 
+//                        acima da lenta, estando a média rápida acima da intermediaria.
+//                        E realiza venda/reversão no cruzamento da média intermediária
+//                        abaixo da lenta, estando a média rápida abaixo da intermediária
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+const 
+// ------------------------ CONSTANTES -------------------------------
+  cCorGatilhoCompra = clGreen;
+  cCorGatilhoVenda  = clRed;
+
+// ------------------------ CONSTANTES -------------------------------
+
+input
+// ------------------------ PARAMETROS -------------------------------
+  pQtdePeriodosMediaRapida(5);
+  pQtdePeriodosMediaIntermediaria(9);
+  pQtdePeriodosMediaLenta(18);
+// ------------------------ PARAMETROS -------------------------------
+
+var
+// ------------------------- VARIAVEIS -------------------------------
+  fMediaRapida: float;
+  fMediaIntermediaria: float;
+  fMediaLenta: float;
+// ------------------------- VARIAVEIS -------------------------------
+
+
+begin
+
+
+// ---------------------------- SETUP --------------------------------
+  fMediaRapida := MediaExp(pQtdePeriodosMediaRapida,Close);
+  fMediaIntermediaria := MediaExp(pQtdePeriodosMediaIntermediaria,Close);
+  fMediaLenta := MediaExp(pQtdePeriodosMediaLenta,Close);
+
+  if not hasPosition
+  and (fMediaRapida < fMediaIntermediaria)
+  and (fMediaIntermediaria < fMediaLenta) and (fMediaIntermediaria[1] > fMediaLenta[1])
+  then 
+  begin
+    SellShortAtMarket;
+    PaintBar(cCorGatilhoVenda);
+  end;
+
+  if not hasPosition
+  and (fMediaRapida > fMediaIntermediaria)
+  and (fMediaIntermediaria > fMediaLenta) and (fMediaIntermediaria[1] < fMediaLenta[1])
+  then
+  begin
+    BuyAtMarket;
+    PaintBar(cCorGatilhoCompra);
+  end;
+
+  if  isBought
+  and (fMediaRapida < fMediaIntermediaria)
+  and (fMediaIntermediaria < fMediaLenta) and (fMediaIntermediaria[1] > fMediaLenta[1])
+  then 
+  begin
+    ReversePosition;
+    PaintBar(cCorGatilhoVenda);
+  end;
+
+  if  isSold
+  and (fMediaRapida > fMediaIntermediaria)
+  and (fMediaIntermediaria > fMediaLenta) and (fMediaIntermediaria[1] < fMediaLenta[1])
+  then
+  begin
+    ReversePosition;
+    PaintBar(cCorGatilhoCompra);
+  end;
+
+
+  Plot(fMediaRapida);
+  Plot2(fMediaIntermediaria);
+  Plot3(fMediaLenta);
+  SetPlotWidth(1,2);
+  SetPlotWidth(2,2);
+  SetPlotWidth(3,2);
+  SetPlotStyle(1, psDash);
+  SetPlotColor(1,clRed);
+  SetPlotColor(2,clBlue);
+  SetPlotColor(3,clOlive);
+
+// ---------------------------- SETUP --------------------------------
+
+end

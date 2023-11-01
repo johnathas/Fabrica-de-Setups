@@ -22,11 +22,11 @@
 
 // -------------------------------------------------------------------
 const 
-// ------------------------ PARAMETROS -------------------------------
+// ------------------------ CONSTANTES -------------------------------
   cCorGatilhoCompra = clGreen;
   cCorGatilhoVenda  = clRed;
 
-// ------------------------ PARAMETROS -------------------------------
+// ------------------------ CONSTANTES -------------------------------
 
 input
 // ------------------------ PARAMETROS -------------------------------
@@ -41,6 +41,7 @@ var
 // ------------------------- VARIAVEIS -------------------------------
   fMediaRapida: float;
   fMediaLenta: float;
+  bSinalCompra, bSinalVenda: boolean;
 // ------------------------- VARIAVEIS -------------------------------
 
 
@@ -57,7 +58,11 @@ begin
     
     if (fMediaRapida > fMediaLenta) and (fMediaRapida > fMediaRapida[1]) 
          and (fMediaLenta > fMediaLenta[1]) and (Close > fMediaRapida)
-    then PaintBar(cCorGatilhoCompra);
+    then 
+    begin
+      PaintBar(cCorGatilhoCompra);
+
+    end;
     
     if (fMediaRapida < fMediaLenta) and (fMediaRapida < fMediaRapida[1]) 
          and (fMediaLenta < fMediaLenta[1]) and (Close < fMediaRapida)

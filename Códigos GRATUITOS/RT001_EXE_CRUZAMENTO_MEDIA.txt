@@ -1,0 +1,86 @@
+// ###################################################################
+// ######### FABRICA DE SETUPS - www.FabricaDeSetups.com.br ##########
+// ###################################################################
+
+// IMPORTANTE: Todos os códigos publicados pela Fábrica de Setup possuem
+// carater educacional. Recomenda-se a sua utilização apenas em ambiente
+// de simulação (Backtest). Qualquer aplicação em contas reais é de inteira
+// responsabilidade do usuário, devendo o mesmo ter realizado todos os testes
+// necessários para certificar de que o código se comporta da maneira que espera. 
+// O software Profit Pro da Nelogica recebe constantemente atualizações que
+// podem afetar o funcionamento de códigos já existentes. Desta forma, A Fábrica 
+// de setup não se responsabiliza por nenhuma execução dos códigos em conta real.
+
+// -------------------------------------------------------------------
+//       CÓDIGO DO SETUP: RT001 - Crossover
+// DATA DE IMPLEMENTAÇÃO: 25/05/2023
+//                VERSÃO: V1.0 (GRATUITA)
+//    TIPO DE ESTRATÉGIA: EXECUÇÃO
+//             DESCRIÇÃO: Realiza compra/reversão quando barra cruza média para cima.
+//                        Realiza venda/reversão quando barra cruza média para baixo.
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+const 
+// ------------------------ CONSTANTES -------------------------------
+  cCorGatilhoCompra = clGreen;
+  cCorGatilhoVenda  = clRed;
+
+// ------------------------ CONSTANTES -------------------------------
+
+input
+// ------------------------ PARAMETROS -------------------------------
+  pQtdePeriodosMedia(20);
+// ------------------------ PARAMETROS -------------------------------
+
+var
+// ------------------------- VARIAVEIS -------------------------------
+  fMedia: float;
+// ------------------------- VARIAVEIS -------------------------------
+
+  
+begin
+
+// ---------------------------- SETUP --------------------------------
+  fMedia := MediaExp(pQtdePeriodosMedia,Close);
+
+  if not hasPosition
+  and (Close < fMedia) and (Close[1] > fMedia[1])
+  then 
+  begin
+    SellShortAtMarket;
+    PaintBar(cCorGatilhoVenda);
+  end;
+
+  if not hasPosition
+  and (Close > fMedia) and (Close[1] < fMedia[1])
+  then
+  begin  
+    BuyAtMarket;
+    PaintBar(cCorGatilhoCompra);
+  end;
+
+  if  isBought
+  and (Close < fMedia) and (Close[1] > fMedia[1])
+  then 
+  begin  
+    ReversePosition;
+    PaintBar(cCorGatilhoVenda);
+  end;
+
+  if  isSold
+  and (Close > fMedia) and (Close[1] < fMedia[1])
+  then 
+  begin
+    ReversePosition;
+    PaintBar(cCorGatilhoCompra);
+  end;
+
+  Plot(fMedia);
+  SetPlotWidth(1,2);
+  SetPlotStyle(1, psDash);
+
+// ---------------------------- SETUP --------------------------------
+
+
+end
