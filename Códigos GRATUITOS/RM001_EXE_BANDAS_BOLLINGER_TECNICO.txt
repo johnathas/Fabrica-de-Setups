@@ -12,7 +12,7 @@
 // de setup não se responsabiliza por nenhuma execução dos códigos em conta real.
 
 // -------------------------------------------------------------------
-//       CÓDIGO DO SETUP: VL001 - Bandas de Bollinger [Fechou fora, fechou dentro]
+//       CÓDIGO DO SETUP: RM001 - Bandas de Bollinger [Fechou fora, fechou dentro]
 // DATA DE IMPLEMENTAÇÃO: 25/05/2023
 //                VERSÃO: V1.0 (GRATUITA)
 //    TIPO DE ESTRATÉGIA: EXECUÇÃO
