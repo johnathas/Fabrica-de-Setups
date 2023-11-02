@@ -1,0 +1,107 @@
+// ###################################################################
+// ######### FABRICA DE SETUPS - www.FabricaDeSetups.com.br ##########
+// ###################################################################
+
+// IMPORTANTE: Todos os códigos publicados pela Fábrica de Setup possuem
+// carater educacional. Recomenda-se a sua utilização apenas em ambiente
+// de simulação (Backtest). Qualquer aplicação em contas reais é de inteira
+// responsabilidade do usuário, devendo o mesmo ter realizado todos os testes
+// necessários para certificar de que o código se comporta da maneira que espera. 
+// O software Profit Pro da Nelogica recebe constantemente atualizações que
+// podem afetar o funcionamento de códigos já existentes. Desta forma, A Fábrica 
+// de setup não se responsabiliza por nenhuma execução dos códigos em conta real.
+
+// -------------------------------------------------------------------
+//       CÓDIGO DO SETUP: RM003 - Canal de Donchian [Fechou fora, fechou dentro]
+// DATA DE IMPLEMENTAÇÃO: 25/05/2023
+//                VERSÃO: V1.0 (GRATUITA)
+//    TIPO DE ESTRATÉGIA: EXECUÇÃO
+//             DESCRIÇÃO: Sinaliza em verde o candle no qual haveria uma 
+//                        compra e de vermelho quando haveria uma venda, 
+//                        uma vez satisfeitas as condições estipuladas no
+//                        setup de Canal de Donchian em sua versão mais básica
+//
+// -------------------------------------------------------------------
+
+const 
+// ------------------------ CONSTANTES -------------------------------
+  cCorGatilhoCompra = clGreen;
+  cCorGatilhoVenda  = clRed;
+  cOffset = 10;
+// ------------------------ CONSTANTES -------------------------------
+
+input
+// ------------------------ PARAMETROS -------------------------------
+  pQtdePeriodos(20);
+// ------------------------ PARAMETROS -------------------------------
+
+var
+// ------------------------- VARIAVEIS -------------------------------
+  fMediaCentral, fBandaSuperior, fBandaInferior: float;
+  fStoploss, fStoplossOffset, fTarget: float;
+// ------------------------- VARIAVEIS -------------------------------
+
+begin
+
+// ---------------------------- SETUP --------------------------------
+  fBandaSuperior := DonchianCh(pQtdePeriodos)|1|;
+  fBandaInferior := DonchianCh(pQtdePeriodos)|2|;
+  fMediaCentral := DonchianCh(pQtdePeriodos)|0|;
+
+  plot(fMediaCentral);
+  plot2(fBandaSuperior);
+  plot3(fBandaInferior);
+
+  SetPlotColor(1,clRed);
+  SetPlotColor(2, clWhite);     
+  SetPlotColor(3, clWhite);
+  SetPlotStyle(2,psDash);
+  SetPlotStyle(3,psDash);
+
+  // Fechou fora, fechou dentro - Compra
+  if  (Close > Close[1])
+  and (Low[1] = fBandaInferior)
+  and (Low > Low[1])
+  and (Close > Open)
+  and not hasPosition
+  then 
+  begin
+    PaintBar(clGreen);
+    BuyAtMarket;
+    fStoploss := fBandaInferior;
+    fStoplossOffset := fStoploss - cOffset*MinPriceIncrement;
+    fTarget := fBandaSuperior;
+  end;
+
+  // Fechou fora, fechou dentro - Venda
+  if  (Close < Close[1])
+  and (High[1] = fBandaSuperior)
+  and (High < High[1])
+  and (Close < Open)
+  and not hasPosition
+  then 
+  begin
+    PaintBar(clRed);
+    SellShortAtMarket;
+    fStoploss := fBandaSuperior;
+    fStoplossOffset := fStoploss + cOffset*MinPriceIncrement;
+    fTarget := fBandaInferior;
+  end;
+
+  if isBought then
+  begin
+    fTarget := fBandaSuperior;
+    SellToCoverLimit(fTarget);  
+    SellToCoverStop(fStoploss, fStoplossOffset); 
+    if (Close < fStoplossOffset) then ClosePosition;
+  end;
+
+  if isSold then 
+  begin
+    fTarget := fBandaInferior;
+    BuyToCoverLimit(fTarget);  
+    BuyToCoverStop(fStoploss, fStoplossOffset); 
+    if (Close > fStoplossOffset) then ClosePosition;
+  end;
+
+end.
