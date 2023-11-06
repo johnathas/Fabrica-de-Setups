@@ -61,7 +61,7 @@ begin
 
   // Fechou fora, fechou dentro - Compra
   if  (Close > fBandaInferior)
-  and (Close[1] < fBandaInferior)
+  and (Close[1] < fBandaInferior[1])
   and (Close > Open)
   and not hasPosition
   then
@@ -75,7 +75,7 @@ begin
 
   // Fechou fora, fechou dentro - Venda
   if  (Close < fBandaSuperior)
-  and (Close[1] > fBandaSuperior)
+  and (Close[1] > fBandaSuperior[1])
   and (Close < Open)
   and not hasPosition
   then
